@@ -1,6 +1,6 @@
 from src.classes import SearchResult, Season, Episode, Server, Source
-from utils.fetcher import Fetcher, SourceFetcher
-from utils.utils import slugify
+from src.utils.fetcher import Fetcher, SourceFetcher
+from src.utils.utils import slugify
 
 base_url= "https://www2.movieorca.com"
 

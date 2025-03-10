@@ -1,6 +1,6 @@
 import json
-from providers.movieorca import Movieorca
-from src.classes import ProviderType, ResponseType, SearchResult, Season, Episode, Server, Source
+from .providers.movieorca import Movieorca
+from .classes import ProviderType, ResponseType, SearchResult, Season, Episode, Server, Source
 
 movieorca = Movieorca
 
