@@ -1,60 +1,46 @@
 import json
 from .providers.movieorca import Movieorca
 from .classes import ProviderType, ResponseType, SearchResult, Season, Episode, Server, Source
-from typing import Union
+from typing import Union, Callable, List
 
-movieorca = Movieorca
+_provider_methods = {
+    "movieorca": Movieorca
+}
 
-def search(provider: ProviderType, query: str, response_type: ResponseType = "default") -> Union[list[SearchResult], str]:
-    results: list[SearchResult]
-    if(provider == "movieorca"):
-        results = movieorca.search(query)
-    
-    if(response_type == "json"):
-        return json.dumps([result.to_dict() for result in results], indent=4)
-    return results
+def _handle_response(data: Union[List, Callable], response_type: ResponseType) -> Union[str, List]:
+    if response_type == "json":
+        return json.dumps([item.to_dict() for item in data], indent=4)
+    return data
 
-def get_seasons(provider: ProviderType, media_id: str, response_type: ResponseType = "default") -> Union[list[Season], str]:
-    seasons: list[Season]
-    if(provider == "movieorca"):
-        seasons = movieorca.get_seasons(media_id)
-    
-    if(response_type == "json"):
-        return json.dumps([season.to_dict() for season in seasons], indent=4)
-    return seasons
+def _get_provider_data(provider: ProviderType, response_type: ResponseType, method_name: str, *args) -> Union[str, List]:
+    provider_class = _provider_methods.get(provider)
+    if provider_class:
+        provider_instance = provider_class()
+        method = getattr(provider_instance, method_name) 
+        data = method(*args)  
+        return _handle_response(data, response_type)
+    return "Provider not found"
 
-def get_episodes(provider: ProviderType, season_id: str, response_type: ResponseType = "default") -> Union[list[Episode], str]:
-    episodes: list[Episode]
-    if(provider == "movieorca"):
-        episodes = movieorca.get_episodes(season_id)
-    
-    if(response_type == "json"):
-        return json.dumps([episode.to_dict() for episode in episodes], indent=4)
-    return episodes
+# Search
+def search(provider: ProviderType, query: str, response_type: ResponseType = "default") -> Union[List[SearchResult], str]:
+    return _get_provider_data(provider, response_type, "search", query)
 
-def get_episode_servers(provider: ProviderType, episode_id: str, response_type: ResponseType = "default") -> Union[list[Server], str]:
-    servers: list[Server]
-    if(provider == "movieorca"):
-        servers = movieorca.get_episode_servers(episode_id)
-    
-    if(response_type == "json"):
-        return json.dumps([server.to_dict() for server in servers], indent=4)
-    return servers
+# Get Seasons
+def get_seasons(provider: ProviderType, media_id: str, response_type: ResponseType = "default") -> Union[List[Season], str]:
+    return _get_provider_data(provider, response_type, "get_seasons", media_id)
 
-def get_movie_servers(provider: ProviderType, media_id: str, response_type: ResponseType = "default") -> Union[list[Server], str]:
-    servers: list[Server]
-    if(provider == "movieorca"):
-        servers = movieorca.get_movie_servers(media_id)
-    
-    if(response_type == "json"):
-        return json.dumps([server.to_dict() for server in servers], indent=4)
-    return servers
+# Get Episodes
+def get_episodes(provider: ProviderType, season_id: str, response_type: ResponseType = "default") -> Union[List[Episode], str]:
+    return _get_provider_data(provider, response_type, "get_episodes", season_id)
 
-def get_sources(provider: ProviderType, server_id: str, response_type: ResponseType = "default") -> Union[list[Source], str]:
-    sources: list[Source]
-    if(provider == "movieorca"):
-        sources = movieorca.get_sources(server_id)
-    
-    if(response_type == "json"):
-        return json.dumps([source.to_dict() for source in sources], indent=4)
-    return sources
+# Get Episode Servers
+def get_episode_servers(provider: ProviderType, episode_id: str, response_type: ResponseType = "default") -> Union[List[Server], str]:
+    return _get_provider_data(provider, response_type, "get_episode_servers", episode_id)
+
+# Get Movie Servers
+def get_movie_servers(provider: ProviderType, media_id: str, response_type: ResponseType = "default") -> Union[List[Server], str]:
+    return _get_provider_data(provider, response_type, "get_movie_servers", media_id)
+
+# Get Sources
+def get_sources(provider: ProviderType, server_id: str, response_type: ResponseType = "default") -> Union[List[Source], str]:
+    return _get_provider_data(provider, response_type, "get_sources", server_id)

@@ -5,6 +5,7 @@ from src.utils.utils import slugify
 base_url= "https://www2.movieorca.com"
 
 class Movieorca:
+    @staticmethod
     def search(query: str):
         soup = Fetcher.fetch(f"{base_url}/search/{slugify(query)}")
         items = soup.find_all(class_="flw-item")
@@ -19,6 +20,7 @@ class Movieorca:
         
         return results
     
+    @staticmethod
     def get_seasons(media_id: str): 
         soup = Fetcher.fetch(f"{base_url}/ajax/season/list/{media_id.split('-')[-1]}")
         items = soup.find_all(class_="ss-item")
@@ -29,6 +31,7 @@ class Movieorca:
         
         return seasons
     
+    @staticmethod
     def get_episodes(season_id: str):
         soup = Fetcher.fetch(f"{base_url}/ajax/season/episodes/{season_id}")
         items = soup.find_all(class_="eps-item")
@@ -39,6 +42,7 @@ class Movieorca:
         
         return  episodes
     
+    @staticmethod
     def get_episode_servers(episode_id: str):
         soup = Fetcher.fetch(f"{base_url}/ajax/episode/servers/{episode_id}")
         items = soup.find_all(class_="link-item")
@@ -49,6 +53,7 @@ class Movieorca:
         
         return servers
     
+    @staticmethod
     def get_movie_servers(media_id: str):
         soup = Fetcher.fetch(f"{base_url}/ajax/episode/list/{media_id.split('-')[-1]}")
         items = soup.find_all(class_="link-item")
@@ -59,6 +64,7 @@ class Movieorca:
         
         return servers
     
+    @staticmethod
     def get_sources(server_id: str):
         sources = SourceFetcher.fetch(f"{base_url}/ajax/episode/sources/{server_id}")
 
