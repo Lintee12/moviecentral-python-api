@@ -11,4 +11,5 @@ def main():
     sources = moviecentral.get_sources("movieorca", servers[0].server_id)
     print(sources[0].embed)
 
-main()
+if __name__ == "__main__":
+    main()
